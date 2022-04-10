@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+std::mutex cout_mtx;
+
 std::vector<std::string> result_table;
 std::mutex result_table_access;
 
@@ -13,8 +15,10 @@ void swimmer(int speed, std::string name) {
     while (distance > 0) {
         std::this_thread::sleep_for(std::chrono::seconds(1));
         distance -= speed;
+        cout_mtx.lock();
         std::cout << name << std::endl;
         std::cout << "distance: " << 100 - distance << std::endl;
+        cout_mtx.unlock();
         ++time;
     }
     std::string result = name + ": " + std::to_string(time) + " sec.";
